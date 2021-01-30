@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-const TableComponent = ({ headers, data, onSorting }) => {
+import TableHeader from "./Header";
 
+const TableComponent = ({ headers, data, onSorting }) => {
   return (
     <table>
       <TableHeader

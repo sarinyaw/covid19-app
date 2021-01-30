@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { TableHeader, Pagination } from "../DataTable";
+import { Table, Pagination } from "../../../components/DataTable";
 
 const AllResult = ({ covid }) => {
   const [totalItems, setTotalItems] = useState(0);
@@ -105,26 +105,13 @@ const AllResult = ({ covid }) => {
           onPageChange={page => setCurrentPage(page)}
         />
       </div>
-      <table>
-        <TableHeader
-          headers={headers}
-          onSorting={(field, order) =>
-            setSorting({ field, order })
-          }
-        />
-        <tbody>
-          {covidData.map((value, key) => (
-            <tr key={key}>
-              <th scope="row">
-                {value.No}
-              </th>
-              {headers.map((element) => {
-                return <td>{value[element.field]}</td>
-              })} 
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Table
+        headers={headers}
+        data={covidData}
+        onSorting={(field, order) =>
+          setSorting({ field, order })
+        }
+      />
     </div>
   )
 }

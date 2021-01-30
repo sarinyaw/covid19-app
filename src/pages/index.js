@@ -1,4 +1,4 @@
-import Covid from './components/Covid'
+import Covid from './Covid'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 

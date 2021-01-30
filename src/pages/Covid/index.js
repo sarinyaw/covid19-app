@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Select, { createFilter } from 'react-select'
-import AllResult from './Covid/AllResult'
-import Profile from './Covid/Profile'
-import Area from './Covid/Area'
+import AllResult from './Group/AllResult'
+import Profile from './Group/Profile'
+import Area from './Group/Area'
 import dayjs from 'dayjs'
 import buddhistEra from 'dayjs/plugin/buddhistEra'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
-import styles from '../../styles/Covid.module.scss'
 import DatePicker from 'react-date-picker/dist/entry.nostyle';
 import TimePicker from 'react-time-picker/dist/entry.nostyle'
 
