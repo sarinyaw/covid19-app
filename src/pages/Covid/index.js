@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import Select, { createFilter } from 'react-select'
-import AllResult from './Group/AllResult'
-import Profile from './Group/Profile'
-import Area from './Group/Area'
 import dayjs from 'dayjs'
 import buddhistEra from 'dayjs/plugin/buddhistEra'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
-import DatePicker from 'react-date-picker/dist/entry.nostyle';
-import TimePicker from 'react-time-picker/dist/entry.nostyle'
 
+import Table from './Table'
+import { DateTimeRangeComponent } from '../../components/Form'
+import AllResultHeader from './Header/AllResult'
+import AreaHeader from './Header/Area'
+import ProfileHeader from './Header/Profile'
 
 const Covid = () => {
   dayjs.extend(buddhistEra)
@@ -31,14 +31,13 @@ const Covid = () => {
     province: ''
   })
 
-  const TableComponent = {
-    0: <AllResult covid={filterResult} />,
-    1: <Profile covid={filterResult} />,
-    2: <Area covid={filterResult} />
+  const TableSelected = {
+    0: <Table filter={filterResult} headers={AllResultHeader()} />,
+    1: <Table filter={filterResult} headers={AreaHeader()} />,
+    2: <Table filter={filterResult} headers={ProfileHeader()} />
   };
 
   useEffect(() => {
-    console.log(stateFilter)
     fetch('/data/province.json')
       .then((res) => res.json())
       .then((data) => {
@@ -48,11 +47,11 @@ const Covid = () => {
           province.label = province.name.th
           delete province.name;
         })
+        newProvinces = [{ value: 0, label: "ทุกจังหวัด" }, ...newProvinces]
+        console.log(newProvinces)
         setProvinces(newProvinces);
       });
   }, [])
-
-  const checkValue = (value) => value ? value : 'ไม่ระบุ'
 
   const search = () => {
     fetch('/data/case.json')
@@ -73,10 +72,10 @@ const Covid = () => {
 
   const filterData = (data) => {
     let { startDateTime, endDateTime, province } = stateFilter
-    console.log([startDateTime, endDateTime, province])
+
     let filters = []
     if (startDateTime && endDateTime) {
-      if (province) {
+      if (province && province !== 'ทุกจังหวัด') {
         filters = data.filter((value) => checkStartToEnd(value, startDateTime, endDateTime) && checkProvince(value, province))
       } else {
         filters = data.filter((value) => checkStartToEnd(value, startDateTime, endDateTime))
@@ -86,7 +85,7 @@ const Covid = () => {
   }
 
   const changeProvince = e => {
-    let province = e ? e.label : ''
+    let province = e ? e.label : 'ทุกจังหวัด'
     setStateFilter({
       ...stateFilter,
       province: province
@@ -100,8 +99,6 @@ const Covid = () => {
       startDate: start,
       startDateTime: start
     })
-    console.log(start)
-    console.log(stateFilter)
   }
 
   const changeEndDate = e => {
@@ -111,8 +108,6 @@ const Covid = () => {
       endDate: end,
       endDateTime: end
     })
-    console.log(end)
-    console.log(stateFilter)
   }
 
   const changeStartTime = e => {
@@ -123,9 +118,6 @@ const Covid = () => {
       startTime: time,
       startDateTime: e ? start : ''
     })
-    console.log(time)
-    console.log(start)
-    console.log(stateFilter)
   }
   const changeEndTime = e => {
     let time = e ? e : ''
@@ -135,14 +127,12 @@ const Covid = () => {
       endTime: time,
       endDateTime: e ? end : ''
     })
-    console.log(time)
-    console.log(end)
-    console.log(stateFilter)
   }
   return (
     <section>
       <h1>Covid</h1>
-      <div>
+      <div className="format-select">
+        <label id="select-province" >จังหวัด</label>
         <Select
           id="search-province"
           instanceId="search-province"
@@ -155,44 +145,13 @@ const Covid = () => {
           onChange={changeProvince}
         />
       </div>
-      <div id="start-date">
-        <label>
-          Start:
-          <DatePicker
-            onChange={changeStartDate}
-            value={stateFilter.startDate}
-            locale="th-TH"
-            format="dd/MM/y"
-            required={true}
-          />
-          <TimePicker
-            onChange={changeStartTime}
-            value={stateFilter.startTime}
-            format="HH:mm"
-            disableClock={true}
-            required={true}
-          />
-        </label>
-      </div>
-      <div id="end-date">
-        <label>
-          End:
-          <DatePicker
-            onChange={changeEndDate}
-            value={stateFilter.endDate}
-            locale="th-TH"
-            format="dd/MM/y"
-            required={true}
-          />
-          <TimePicker
-            onChange={changeEndTime}
-            value={stateFilter.endTime}
-            format="HH:mm"
-            disableClock={true}
-            required={true}
-          />
-        </label>
-      </div>
+      <DateTimeRangeComponent
+        datetime={stateFilter}
+        changeStartDate={changeStartDate}
+        changeStartTime={changeStartTime}
+        changeEndDate={changeEndDate}
+        changeEndTime={changeEndTime}
+      />
       <div>
         <button onClick={() => search()}>ค้นหา</button>
       </div>
@@ -202,7 +161,7 @@ const Covid = () => {
         <button onClick={() => setGroupColumn(2)}>ข้อมูลพื้นที่</button>
       </div>
       {
-        filterResult.length === 0 ? '' : TableComponent[group]
+        filterResult.length === 0 ? '' : TableSelected[group]
       }
     </section>
   )
