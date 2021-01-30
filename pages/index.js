@@ -8,6 +8,8 @@ function Home() {
       <Head>
         <title>Covid19 App</title>
         <link rel="icon" href="/favicon.ico" />
+        
+        <link href="/assets/vendor/fontawesome-free-5.15.2-web/css/all.css" rel="stylesheet"></link>
       </Head>
 
       <main className={styles.main}>
