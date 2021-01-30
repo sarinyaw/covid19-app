@@ -8,26 +8,18 @@
     "start": "next start"
   },
   "dependencies": {
-    "@y0c/react-datepicker": "^1.0.4",
-    "@zeit/next-css": "^1.0.1",
-    "@zeit/next-less": "^1.0.1",
-    "@zeit/next-sass": "^1.0.1",
-    "date-fns": "^2.16.1",
+    "@fortawesome/fontawesome-free": "^5.15.2",
+    "@fortawesome/react-fontawesome": "^0.1.14",
     "dayjs": "^1.10.4",
-    "install": "^0.13.0",
     "next": "10.0.5",
-    "npm": "^6.14.11",
     "react": "17.0.1",
     "react-date-picker": "^8.0.6",
-    "react-datepicker": "^3.4.1",
     "react-dom": "17.0.1",
     "react-hook-form": "^6.14.2",
-    "react-nice-dates": "^3.0.7",
-    "react-rainbow-components": "^1.24.1",
     "react-select": "^4.0.2",
     "react-time-picker": "^4.1.2",
     "sass": "^1.32.5",
-    "thaidatepicker-react": "^0.1.4"
+    "styled-components": "^5.2.1"
   },
   "devDependencies": {
     "css-loader": "^5.0.1"
