@@ -1,4 +1,4 @@
-import Pagination from "./Pagination";
-import Table from "./Table";
+import PaginationComponent from "./Pagination";
+import TableComponent from "./Table";
 
-export { Table, Pagination };
+export { TableComponent, PaginationComponent };

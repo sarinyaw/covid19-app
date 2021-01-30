@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const HeaderComponent = ({ headers, onSorting }) => {
+const HeaderComponent = ({ styles, headers, onSorting }) => {
   const [sortingField, setSortingField] = useState("");
   const [sortingOrder, setSortingOrder] = useState("asc");
 
@@ -14,10 +14,13 @@ const HeaderComponent = ({ headers, onSorting }) => {
   };
 
   return (
-    <thead>
+    <thead className={styles.thead}>
       <tr>
         {headers.map(({ name, field, sortable }) => (
-          <th key={name} onClick={() => sortable ? onSortingChange(field) : null }>
+          <th
+            key={name}
+            className={sortable ? styles.sortable : styles.unsortable}
+            onClick={() => sortable ? onSortingChange(field) : null}>
             {name}
             {sortingField && sortingField === field && (
               sortingOrder === "asc"

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import styles from '../../../styles/Pagination.module.scss'
+import styles from '../../../styles/components/Pagination.module.scss'
 
 const PaginationComponent = ({
   total = 0,
@@ -21,7 +21,7 @@ const PaginationComponent = ({
     let showEnd = currentPage + 5 <= totalPages ? currentPage + 5 : totalPages
     for (let i = showStart; i <= showEnd; i++) {
       pages.push(
-        <span key={i} className={i === currentPage ? styles.selected : ''} active={i === currentPage} onClick={() => onPageChange(i)}>{i}</span>
+        <span key={i} className={i === currentPage ? styles.selected : ''} onClick={() => onPageChange(i)}>{i}</span>
       );
     }
     return pages;
@@ -30,7 +30,7 @@ const PaginationComponent = ({
   if (totalPages === 0) return null;
   const isFirstPage = currentPage === firstPage
   const isLastPage = currentPage === totalPages
-  console.log(currentPage)
+
   return (
     <div className={styles.pagination}>
       <span onClick={() => onPageChange(firstPage)}
