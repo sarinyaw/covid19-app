@@ -1,0 +1,46 @@
+.table {
+  border-collapse: collapse;
+  th,
+  td {
+    border: 0;
+    padding: 1rem;
+  }
+}
+
+.start {
+  text-align: start;
+}
+.center {
+  text-align: center;
+}
+.end {
+  text-align: end;
+}
+
+.thead {
+  background-color: cadetblue;
+  color: white;
+}
+
+.tbody {
+  tr {
+    &:nth-child(odd) {
+      background-color: white;
+    }
+
+    &:nth-child(even) {
+      background-color: rgb(225, 254, 255);
+    }
+  }
+}
+
+.sortable,
+.unsortable {
+  user-select: none;
+}
+
+.sortable {
+  &:hover {
+    cursor: pointer;
+  }
+}
