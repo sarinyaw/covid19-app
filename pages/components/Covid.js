@@ -18,15 +18,18 @@ const Covid = () => {
   dayjs.extend(localizedFormat)
   dayjs.extend(isSameOrBefore)
   dayjs.extend(isSameOrAfter)
-  const [covid, setCovid] = useState([]);
   const [provinces, setProvinces] = useState([]);
-  const [selectedProvince, setSelectedProvince] = useState('');
-  const [group, setGroupColumn] = useState(1);
+  const [group, setGroupColumn] = useState(0);
   const [filterResult, setFilterResult] = useState([]);
   let date = new Date()
-  const [stateDateTime, setStateDateTime] = useState({
+  const [stateFilter, setStateFilter] = useState({
+    startDate: new Date(new Date(date - 86400000 * 16)),
+    startTime: '00:00',
+    endDate: new Date(date),
+    endTime: '00:00',
     startDateTime: new Date(new Date(date - 86400000 * 16).setHours(0, 0, 0, 0)),
-    endDateTime: new Date(date.setHours(0, 0, 0, 0))
+    endDateTime: new Date(date.setHours(0, 0, 0, 0)),
+    province: ''
   })
 
   const TableComponent = {
@@ -36,7 +39,8 @@ const Covid = () => {
   };
 
   useEffect(() => {
-    fetch('/province.json')
+    console.log(stateFilter)
+    fetch('/data/province.json')
       .then((res) => res.json())
       .then((data) => {
         let newProvinces = Object.keys(data).map((k) => data[k])
@@ -47,89 +51,94 @@ const Covid = () => {
         })
         setProvinces(newProvinces);
       });
-    fetch('/case.json')
+  }, [])
+
+  const checkValue = (value) => value ? value : 'ไม่ระบุ'
+
+  const search = () => {
+    fetch('/data/case.json')
       .then((res) => res.json())
       .then((data) => {
         let newData = data.Data;
-        newData.map(value => {
+        newData.map((value, key) => {
           value.ConfirmDateBud = dayjs(value.ConfirmDate).format('DD/MM/BBBB HH:mm:ss')
         })
-        console.log(stateDateTime)
-        setCovid(newData);
-        let filters = newData.filter((value) => checkDate(value, stateDateTime.startDateTime, stateDateTime.endDateTime))
-        setFilterResult(filters)
-      });
-  }, [])
+        filterData(newData)
+      })
+  }
 
   const checkStart = (data, start) => dayjs(data.ConfirmDate).isSameOrAfter(dayjs(start))
   const checkEnd = (data, end) => dayjs(data.ConfirmDate).isSameOrBefore(dayjs(end))
-  const checkDate = (data, start, end) => checkStart(data, start) && checkEnd(data, end)
+  const checkStartToEnd = (data, start, end) => checkStart(data, start) && checkEnd(data, end)
   const checkProvince = (data, province) => data.Province === province
 
-  const filterData = (start, end, province) => {
-    if (province) {
-      return covid.filter((value) => checkDate(value, start, end) && checkProvince(value, province))
-    } else {
-      return covid.filter((value) => checkDate(value, start, end))
+  const filterData = (data) => {
+    let { startDateTime, endDateTime, province } = stateFilter
+    console.log([startDateTime, endDateTime, province])
+    let filters = []
+    if (startDateTime && endDateTime) {
+      if (province) {
+        filters = data.filter((value) => checkStartToEnd(value, startDateTime, endDateTime) && checkProvince(value, province))
+      } else {
+        filters = data.filter((value) => checkStartToEnd(value, startDateTime, endDateTime))
+      }
     }
-  }
-
-  const changeStartDate = e => {
-    let start = e ? e : stateDateTime.startDateTime
-    let end = stateDateTime.endDateTime
-    setStateDateTime({
-      ...stateDateTime,
-      startDateTime: start
-    })
-    let province = selectedProvince
-    let filters = filterData(start, end, province)
-    setFilterResult(filters)
-  }
-
-  const changeEndDate = e => {
-    let start = stateDateTime.startDateTime
-    let end = e ? e : stateDateTime.endDateTime
-    setStateDateTime({
-      ...stateDateTime,
-      endDateTime: end
-    })
-    let province = selectedProvince
-    let filters = filterData(start, end, province)
     setFilterResult(filters)
   }
 
   const changeProvince = e => {
-    let start = stateDateTime.startDateTime
-    let end = stateDateTime.endDateTime
     let province = e ? e.label : ''
-    setSelectedProvince(province)
-    let filters = filterData(start, end, province)
-    setFilterResult(filters)
+    setStateFilter({
+      ...stateFilter,
+      province: province
+    })
+  }
+
+  const changeStartDate = e => {
+    let start = e ? e : ''
+    setStateFilter({
+      ...stateFilter,
+      startDate: start,
+      startDateTime: start
+    })
+    console.log(start)
+    console.log(stateFilter)
+  }
+
+  const changeEndDate = e => {
+    let end = e ? e : ''
+    setStateFilter({
+      ...stateFilter,
+      endDate: end,
+      endDateTime: end
+    })
+    console.log(end)
+    console.log(stateFilter)
   }
 
   const changeStartTime = e => {
-    let time = e ? e : stateDateTime.startDateTime
-    let start = dayjs(`${dayjs(stateDateTime.startDateTime).format('YYYY-MM-DD')} ${time}`)
-    let end = stateDateTime.endDateTime
-    setStateDateTime({
-      ...stateDateTime,
-      startDateTime: new Date(start)
+    let time = e ? e : ''
+    let start = new Date(dayjs(`${dayjs(stateFilter.startDate).format('YYYY-MM-DD')} ${time}`))
+    setStateFilter({
+      ...stateFilter,
+      startTime: time,
+      startDateTime: e ? start : ''
     })
-    let province = selectedProvince
-    let filters = filterData(start, end, province)
-    setFilterResult(filters)
+    console.log(time)
+    console.log(start)
+    console.log(stateFilter)
   }
   const changeEndTime = e => {
-    let time = e ? e : stateDateTime.endDateTime
-    let end = dayjs(`${dayjs(stateDateTime.endDateTime).format('YYYY-MM-DD')} ${time}`)
-    let start = stateDateTime.startDateTime
-    setStateDateTime({
-      ...stateDateTime,
-      endDateTime: new Date(end)
+    let time = e ? e : ''
+    let end = new Date(dayjs(`${dayjs(stateFilter.endDate).format('YYYY-MM-DD')} ${time}`))
+    setStateFilter({
+      ...stateFilter,
+      endTime: time,
+      endDateTime: e ? end : ''
     })
-    let province = selectedProvince
-    let filters = filterData(start, end, province)
-    setFilterResult(filters)
+    console.log(time)
+    console.log(end)
+    console.log(stateFilter)
   }
   return (
     <section>
@@ -143,7 +152,7 @@ const Covid = () => {
           filterOption={createFilter({ matchFrom: "start" })}
           options={provinces}
           isClearable={true}
-          value={provinces.find(province => province.label === selectedProvince)}
+          value={provinces.find(province => province.label === stateFilter.province)}
           onChange={changeProvince}
         />
       </div>
@@ -152,14 +161,17 @@ const Covid = () => {
           Start:
           <DatePicker
             onChange={changeStartDate}
-            value={stateDateTime.startDateTime}
+            value={stateFilter.startDate}
             locale="th-TH"
             format="dd/MM/y"
+            required={true}
           />
           <TimePicker
             onChange={changeStartTime}
-            value={stateDateTime.startDateTime}
+            value={stateFilter.startTime}
             format="HH:mm"
+            disableClock={true}
+            required={true}
           />
         </label>
       </div>
@@ -168,27 +180,30 @@ const Covid = () => {
           End:
           <DatePicker
             onChange={changeEndDate}
-            value={stateDateTime.endDateTime}
+            value={stateFilter.endDate}
             locale="th-TH"
             format="dd/MM/y"
+            required={true}
           />
           <TimePicker
             onChange={changeEndTime}
-            value={stateDateTime.endDateTime}
+            value={stateFilter.endTime}
             format="HH:mm"
+            disableClock={true}
+            required={true}
           />
         </label>
       </div>
       <div>
-        <p>Group</p>
+        <button onClick={() => search()}>ค้นหา</button>
+      </div>
+      <div>
         <button onClick={() => setGroupColumn(0)}>ข้อมูลทั้งหมด</button>
         <button onClick={() => setGroupColumn(1)}>ข้อมูลบุคคล</button>
         <button onClick={() => setGroupColumn(2)}>ข้อมูลพื้นที่</button>
       </div>
       {
-        covid.length === 0 ? (
-          <p>fetching...</p>
-        ) : TableComponent[group]
+        filterResult.length === 0 ? '' : TableComponent[group]
       }
     </section>
   )
