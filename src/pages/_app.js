@@ -1,4 +1,4 @@
-import '../styles/globals.scss'
+import '../styles/app.scss'
 import 'react-date-picker/dist/DatePicker.css'
 import 'react-calendar/dist/Calendar.css'
 import 'react-time-picker/dist/TimePicker.css'
