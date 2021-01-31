@@ -4,6 +4,7 @@
   max-width: max-content;
   display: flex;
   flex-wrap: wrap;
+  user-select: none;
   > * {
     margin: .5rem;
   }

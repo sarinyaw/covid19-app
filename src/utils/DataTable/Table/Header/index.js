@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const HeaderComponent = ({ styles, customStyle, headers, onSorting }) => {
   const [sortingField, setSortingField] = useState("");
@@ -12,23 +12,23 @@ const HeaderComponent = ({ styles, customStyle, headers, onSorting }) => {
     setSortingOrder(order);
     onSorting(field, order);
   };
-
   return (
     <thead className={styles.thead}>
       <tr style={customStyle.header}>
-        {headers.map(({ name, field, sortable }) => (
-          <th
-            key={name}
-            className={sortable ? styles.sortable : styles.unsortable}
-            onClick={() => sortable ? onSortingChange(field) : null}>
-            {name}
-            {sortingField && sortingField === field && (
-              sortingOrder === "asc"
-                ? <i className="fas fa-arrow-down"></i>
-                : <i className="fas fa-arrow-up"></i>
-            )}
-          </th>
-        ))}
+        {headers.map(({ name, field, sortable, checked }) => {
+          return checked ?
+            (<th
+              key={name}
+              className={sortable ? styles.sortable : styles.unsortable}
+            >
+              <span onClick={() => sortable ? onSortingChange(field) : null}>{name}</span>
+              {sortingField && sortingField === field && (
+                sortingOrder === "asc"
+                  ? <i className="fas fa-arrow-down"></i>
+                  : <i className="fas fa-arrow-up"></i>
+              )}
+            </th>) : (null)
+        })}
       </tr>
     </thead>
   );

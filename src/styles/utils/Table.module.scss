@@ -1,5 +1,6 @@
 .table {
   border-collapse: collapse;
+  margin: auto;
   th,
   td {
     border: 0;
@@ -8,7 +9,8 @@
 }
 @media screen and (max-width: 1200px) {
   .table {
-    width: 960px;
+    width: max-content;
+    max-width: 960px;
     margin: auto;
     display: block;
     overflow-x: auto;
@@ -17,19 +19,20 @@
 
 @media screen and (max-width: 1024px) {
   .table {
-    width: 600px;
+    max-width: 600px;
   }
 }
 
 @media screen and (max-width: 768px) {
   .table {
-    width: 480px;
+    max-width: 480px;
   }
 }
 
 @media screen and (max-width: 600px) {
   .table {
-    width: 300px;
+    width: max-content;
+    max-width: 300px;
   }
 }
 

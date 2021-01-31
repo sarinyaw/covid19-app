@@ -8,9 +8,7 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 
 import Table from '../../components/Covid/DataTable'
 import { DateTimeRangeComponent } from '../../utils/Form'
-import AllResultHeader from '../../components/Covid/Header/AllResult'
-import AreaHeader from '../../components/Covid/Header/Area'
-import ProfileHeader from '../../components/Covid/Header/Profile'
+import AllCases from '../../components/Covid/Header/AllCases'
 
 import styles from '../../styles/pages/Covid.module.scss'
 
@@ -23,6 +21,8 @@ const Covid = () => {
   const [group, setGroupColumn] = useState(0);
   const [filterResult, setFilterResult] = useState([]);
   const [isLoadApi, setIsLoadApi] = useState(false)
+  const [columns, setColumns] = useState(AllCases())
+  const [filterColumns, setFilterColumns] = useState(AllCases())
   let date = new Date()
   const [stateFilter, setStateFilter] = useState({
     startDate: new Date(new Date(date - 86400000 * 30)),
@@ -33,12 +33,6 @@ const Covid = () => {
     endDateTime: new Date(date.setHours(0, 0, 0, 0)),
     province: 'ทุกจังหวัด'
   })
-
-  const TableSelected = {
-    0: <Table filter={filterResult} headers={AllResultHeader()} />,
-    1: <Table filter={filterResult} headers={AreaHeader()} />,
-    2: <Table filter={filterResult} headers={ProfileHeader()} />
-  };
 
   useEffect(() => {
     setIsLoadApi(true)
@@ -134,6 +128,15 @@ const Covid = () => {
       endDateTime: e ? end : ''
     })
   }
+
+  const changeColumn = (e, index) => {
+    let newColumns = columns
+    newColumns[index].checked = e.target.checked
+    setColumns(newColumns)
+    let filters = newColumns.filter((value) => value.checked === true)
+    setFilterColumns(filters)
+  }
+
   return (
     <section className={isLoadApi ? styles.block : ''}>
       <h1>ข้อมูลเคส COVID-19</h1>
@@ -164,13 +167,22 @@ const Covid = () => {
         <button className="button button-search" onClick={() => search()}>ค้นหา</button>
       </div>
       <div className={styles.groupMenu}>
-        <button className="button button-view" onClick={() => setGroupColumn(0)}>ข้อมูลทั้งหมด</button>
-        <button className="button button-view" onClick={() => setGroupColumn(1)}>ข้อมูลบุคคล</button>
-        <button className="button button-view" onClick={() => setGroupColumn(2)}>ข้อมูลพื้นที่</button>
+        {columns.map((column, index) => (
+          <label key={`column-checkbox-${index}`}>
+            <input
+              key={`column-check-${index}`}
+              name="columnCheck"
+              type="checkbox"
+              checked={column.checked}
+              onChange={e => changeColumn(e, index)} />
+            {column.name}
+          </label>
+        ))}
+
       </div>
       {isLoadApi ?
         (<div className={styles.loading}>กำลังโหลดข้อมูล...</div>) :
-        filterResult.length === 0 ? '' : TableSelected[group]
+        filterResult.length === 0 ? '' : <Table filter={filterResult} headers={filterColumns} />
       }
     </section>
   )

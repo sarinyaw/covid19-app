@@ -109,16 +109,7 @@ const Table = ({ filter, headers }) => {
           value={colorsOption.find(color => color.label === colorSelected)}
           onChange={changeColor}
         />
-        <Select
-          id="page-item"
-          instanceId="page-item"
-          name="pageItem"
-          className={styles.selectOption}
-          options={options}
-          defaultValue={options[0]}
-          onChange={changePageItem}
-          isSearchable={false}
-        />
+
       </div>
       <TableComponent
         headers={headers}
@@ -129,6 +120,16 @@ const Table = ({ filter, headers }) => {
         }
       />
       <div className={styles.menu}>
+        <Select
+          id="page-item"
+          instanceId="page-item"
+          name="pageItem"
+          className={styles.selectOption}
+          options={options}
+          defaultValue={options[0]}
+          onChange={changePageItem}
+          isSearchable={false}
+        />
         <PaginationComponent
           total={totalItems}
           itemsPerPage={itemsPerPage}
