@@ -35,7 +35,6 @@ const Covid = () => {
   })
 
   useEffect(() => {
-    setIsLoadApi(true)
     fetch('/api/province')
       .then((res) => res.json())
       .then((data) => {
@@ -47,7 +46,6 @@ const Covid = () => {
         })
         newProvinces = [{ value: 0, label: "ทุกจังหวัด" }, ...newProvinces]
         setProvinces(newProvinces);
-        setIsLoadApi(false)
       });
   }, [])
 
