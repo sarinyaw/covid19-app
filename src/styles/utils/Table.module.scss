@@ -6,6 +6,32 @@
     padding: 1rem;
   }
 }
+@media screen and (max-width: 1200px) {
+  .table {
+    width: 960px;
+    margin: auto;
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .table {
+    width: 600px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .table {
+    width: 480px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .table {
+    width: 300px;
+  }
+}
 
 .start {
   text-align: start;
@@ -29,7 +55,7 @@
     }
 
     &:nth-child(even) {
-      background-color: rgb(225, 254, 255);
+      background-color: #f5f5f5;
     }
   }
 }
