@@ -67,7 +67,7 @@ const PaginationComponent = ({
         className={isLastPage ? styles.disabled : ''}
         disabled={isLastPage}><i className="fas fa-angle-right"></i></span>
       <span onClick={() => onPageChange(totalPages)}
-        style={isLastPage ? customStyle.pageItem : []}
+        style={!isLastPage ? customStyle.pageItem : []}
         className={isLastPage ? styles.disabled : ''}
         disabled={isLastPage}><i className="fas fa-angle-double-right"></i></span>
     </div>
