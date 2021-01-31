@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import TableHeader from "./Header";
-import styles from '../../../styles/components/Table.module.scss'
+import styles from '../../../styles/utils/Table.module.scss'
 
-const TableComponent = ({ headers, data, onSorting }) => {
+const TableComponent = ({ headers, data, customStyle, onSorting }) => {
   return (
     <table className={styles.table}>
       <TableHeader
         styles={styles}
+        customStyle={customStyle}
         headers={headers}
         onSorting={onSorting}
       />
