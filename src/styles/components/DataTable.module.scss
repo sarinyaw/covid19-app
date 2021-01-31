@@ -1,0 +1,32 @@
+.dataTable {
+}
+
+.menu {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.selectColor {
+  min-width: max-content;
+  width: 200px;
+  margin: 0.5rem;
+  > div {
+    border-radius: 8px;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+.selectOption {
+  width: 80px;
+  margin: 0.5rem;
+  > div {
+    border-radius: 8px;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
