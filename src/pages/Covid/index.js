@@ -6,11 +6,13 @@ import localizedFormat from 'dayjs/plugin/localizedFormat'
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 
-import Table from './Table'
-import { DateTimeRangeComponent } from '../../components/Form'
-import AllResultHeader from './Header/AllResult'
-import AreaHeader from './Header/Area'
-import ProfileHeader from './Header/Profile'
+import Table from '../../components/Covid/DataTable'
+import { DateTimeRangeComponent } from '../../utils/Form'
+import AllResultHeader from '../../components/Covid/Header/AllResult'
+import AreaHeader from '../../components/Covid/Header/Area'
+import ProfileHeader from '../../components/Covid/Header/Profile'
+
+import styles from '../../styles/pages/Covid.module.scss'
 
 const Covid = () => {
   dayjs.extend(buddhistEra)
@@ -20,15 +22,16 @@ const Covid = () => {
   const [provinces, setProvinces] = useState([]);
   const [group, setGroupColumn] = useState(0);
   const [filterResult, setFilterResult] = useState([]);
+  const [isLoadApi, setIsLoadApi] = useState(false)
   let date = new Date()
   const [stateFilter, setStateFilter] = useState({
-    startDate: new Date(new Date(date - 86400000 * 16)),
+    startDate: new Date(new Date(date - 86400000 * 30)),
     startTime: '00:00',
     endDate: new Date(date),
     endTime: '00:00',
-    startDateTime: new Date(new Date(date - 86400000 * 16).setHours(0, 0, 0, 0)),
+    startDateTime: new Date(new Date(date - 86400000 * 30).setHours(0, 0, 0, 0)),
     endDateTime: new Date(date.setHours(0, 0, 0, 0)),
-    province: ''
+    province: 'ทุกจังหวัด'
   })
 
   const TableSelected = {
@@ -38,7 +41,8 @@ const Covid = () => {
   };
 
   useEffect(() => {
-    fetch('/data/province.json')
+    setIsLoadApi(true)
+    fetch('/api/province')
       .then((res) => res.json())
       .then((data) => {
         let newProvinces = Object.keys(data).map((k) => data[k])
@@ -48,13 +52,14 @@ const Covid = () => {
           delete province.name;
         })
         newProvinces = [{ value: 0, label: "ทุกจังหวัด" }, ...newProvinces]
-        console.log(newProvinces)
         setProvinces(newProvinces);
+        setIsLoadApi(false)
       });
   }, [])
 
   const search = () => {
-    fetch('/data/case.json')
+    setIsLoadApi(true)
+    fetch('/api/case')
       .then((res) => res.json())
       .then((data) => {
         let newData = data.Data;
@@ -62,6 +67,7 @@ const Covid = () => {
           value.ConfirmDateBud = dayjs(value.ConfirmDate).format('DD/MM/BBBB HH:mm:ss')
         })
         filterData(newData)
+        setIsLoadApi(false)
       })
   }
 
@@ -77,7 +83,7 @@ const Covid = () => {
     if (startDateTime && endDateTime) {
       if (province && province !== 'ทุกจังหวัด') {
         filters = data.filter((value) => checkStartToEnd(value, startDateTime, endDateTime) && checkProvince(value, province))
-      } else {
+      } else if (province && province == 'ทุกจังหวัด') {
         filters = data.filter((value) => checkStartToEnd(value, startDateTime, endDateTime))
       }
     }
@@ -85,7 +91,7 @@ const Covid = () => {
   }
 
   const changeProvince = e => {
-    let province = e ? e.label : 'ทุกจังหวัด'
+    let province = e ? e.label : ''
     setStateFilter({
       ...stateFilter,
       province: province
@@ -129,38 +135,41 @@ const Covid = () => {
     })
   }
   return (
-    <section>
-      <h1>Covid</h1>
-      <div className="format-select">
-        <label id="select-province" >จังหวัด</label>
-        <Select
-          id="search-province"
-          instanceId="search-province"
-          placeholder="จังหวัด"
-          name="province"
-          filterOption={createFilter({ matchFrom: "start" })}
-          options={provinces}
-          isClearable={true}
-          value={provinces.find(province => province.label === stateFilter.province)}
-          onChange={changeProvince}
+    <section className={isLoadApi ? styles.block : ''}>
+      <h1>ข้อมูลเคส COVID-19</h1>
+      <div className="search-wrapper">
+        <div className="format-select">
+          <label id="select-province" >จังหวัด</label>
+          <Select
+            id="search-province"
+            instanceId="search-province"
+            placeholder="จังหวัด"
+            className="select"
+            name="province"
+            filterOption={createFilter({ matchFrom: "start" })}
+            options={provinces}
+            defaultValue={provinces[0]}
+            isClearable={true}
+            value={provinces.find(province => province.label === stateFilter.province)}
+            onChange={changeProvince}
+          />
+        </div>
+        <DateTimeRangeComponent
+          datetime={stateFilter}
+          changeStartDate={changeStartDate}
+          changeStartTime={changeStartTime}
+          changeEndDate={changeEndDate}
+          changeEndTime={changeEndTime}
         />
+        <button className="button button-search" onClick={() => search()}>ค้นหา</button>
       </div>
-      <DateTimeRangeComponent
-        datetime={stateFilter}
-        changeStartDate={changeStartDate}
-        changeStartTime={changeStartTime}
-        changeEndDate={changeEndDate}
-        changeEndTime={changeEndTime}
-      />
-      <div>
-        <button onClick={() => search()}>ค้นหา</button>
+      <div className={styles.groupMenu}>
+        <button className="button button-view" onClick={() => setGroupColumn(0)}>ข้อมูลทั้งหมด</button>
+        <button className="button button-view" onClick={() => setGroupColumn(1)}>ข้อมูลบุคคล</button>
+        <button className="button button-view" onClick={() => setGroupColumn(2)}>ข้อมูลพื้นที่</button>
       </div>
-      <div>
-        <button onClick={() => setGroupColumn(0)}>ข้อมูลทั้งหมด</button>
-        <button onClick={() => setGroupColumn(1)}>ข้อมูลบุคคล</button>
-        <button onClick={() => setGroupColumn(2)}>ข้อมูลพื้นที่</button>
-      </div>
-      {
+      {isLoadApi ?
+        (<div className={styles.loading}>กำลังโหลดข้อมูล...</div>) :
         filterResult.length === 0 ? '' : TableSelected[group]
       }
     </section>

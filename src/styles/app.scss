@@ -14,19 +14,89 @@ a {
   box-sizing: border-box;
 }
 
+h1 {
+  text-align: center;
+}
+
+.button {
+  padding: .5rem;
+  background-color: white;
+  font-family: "Sarabun", sans-serif;
+  font-size: 16px;
+  min-width: 120px;
+  border-radius: 8px;
+  border: unset;
+  outline:0;
+  transition: all .25s ease-in-out;
+  &:hover {
+    opacity: 0.8;
+    cursor: pointer;
+    transition: all .25s ease-in-out;
+  }
+}
+
+.button-search {
+  color: #fff;
+  background-color: #0877ce;
+  margin: 1rem auto;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+}
+
+.button-view {
+  color: rgb(27, 27, 27);
+  background-color: #fff;
+  border: unset;
+  box-shadow: 0px 0px 2px 1px grey;
+}
+
+.format-input {
+  margin: 0 0.5rem;
+  input {
+    border-radius: 8px;
+    padding: .5rem;
+    border: solid 1px hsl(0, 0%, 80%);
+    text-align: center;
+  }
+}
+
 .format-select {
   display: flex;
   flex-direction: column;
+  label {
+    margin: 0 0.5rem;
+    width: 100%;
+  }
+  > div {
+    margin: 0.5rem;
+  }
 }
 
 .format-picker {
   display: flex;
   flex-wrap: wrap;
   label {
+    margin: 0 0.5rem;
     width: 100%;
   }
 }
 
-.react-date-picker__wrapper {
-  padding: .5rem;
+@media screen and (min-width: 601px) {
+  .search-wrapper {
+    max-width: 600px;
+    width: 100%;
+    margin: auto;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .search-wrapper {
+    width: 90%;
+    margin: auto;
+    input {
+      width: 100%;
+      max-width: max-content;
+    }
+  }
 }
