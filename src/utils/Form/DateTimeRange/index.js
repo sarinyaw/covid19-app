@@ -8,8 +8,8 @@ import buddhistEra from 'dayjs/plugin/buddhistEra'
 const DateTimeRangeComponent = ({ datetime, changeStartDate, changeStartTime, changeEndDate, changeEndTime }) => {
   let { startDate, startTime, endDate, endTime } = datetime
   dayjs.extend(buddhistEra)
-  let startYear = dayjs(startDate).format('BBBB')
-  let endYear = dayjs(endDate).format('BBBB')
+  let startYear = startDate ? dayjs(startDate).format('BBBB') : 'y'
+  let endYear =  endDate ? dayjs(endDate).format('BBBB') : 'y'
   return (
     <div>
       <div className="format-picker">
