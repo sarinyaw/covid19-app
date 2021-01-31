@@ -16,7 +16,7 @@ const headers = () => [
   {
     name: 'อายุ',
     field: 'Age',
-    sortable: true,
+    sortable: false,
     checked: true,
     align: 'start',
   },
@@ -79,7 +79,7 @@ const headers = () => [
   {
     name: 'จำนวนวันกักตัว',
     field: 'StatQuarantine',
-    sortable: true,
+    sortable: false,
     checked: true,
     align: 'end',
   }
